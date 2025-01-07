@@ -37,51 +37,53 @@ function operate(a, b, operator) {
   }
 }
 
+function handleOperation() {
+  if (operator == "") {
+    return;
+  }
+
+  if (operandA == null && screen.textContent) {
+    operandA = Math.round(parseFloat(screen.textContent) * 100) / 100;
+    console.log(operandA + operator + operandB);
+    screen.textContent = "";
+  } else if (operandB == null && screen.textContent && operator != "=") {
+    operandB = Math.round(parseFloat(screen.textContent) * 100) / 100;
+    operandA = operate(operandA, operandB, operator);
+    operandB = null;
+    operator = "=";
+    console.log(operandA + operator + operandB);
+    screen.textContent = String(operandA);
+  }
+}
 const screen = document.querySelector("#screen");
 const operators = document.querySelector("#operators");
 
 operators.addEventListener("click", (event) => {
   if (event.target.id == "operators") return;
 
-  if (operandA == null && screen.textContent) {
-    operandA = parseInt(screen.textContent);
-    console.log(operandA);
-    screen.textContent = "";
-  } else if (operandB == null && screen.textContent) {
-    operandB = parseInt(screen.textContent);
-    console.log(operandB);
-    console.log("=");
-    operandA = operate(operandA, operandB, operator);
-    operandB = null;
-    screen.textContent = String(operandA);
-    console.log(operandA);
-  }
+  handleOperation();
 
   switch (event.target.id) {
     case "add":
       operator = "+";
-      console.log(operator);
       break;
 
     case "subtract":
       operator = "-";
-      console.log(operator);
       break;
 
     case "multiply":
       operator = "*";
-      console.log(operator);
       break;
 
     case "divide":
       operator = "/";
-      console.log(operator);
       break;
 
     default:
-      console.log("container pressed");
       break;
   }
+  console.log(operandA + operator + operandB);
 });
 
 const numbers = document.querySelector("#numbers");
@@ -99,25 +101,7 @@ numbers.addEventListener("click", (event) => {
       break;
 
     case "equal":
-      if (
-        operandA &&
-        operandB == null &&
-        screen.textContent & (operator != "")
-      ) {
-        operandB = parseInt(screen.textContent);
-        console.log(operandB);
-        console.log("=");
-        operandA = operate(operandA, operandB, operator);
-        operandB = null;
-        operator = null;
-        screen.textContent = String(operandA);
-        console.log(operandA);
-      }
-      if (operandA && operandB && operator) {
-        operandA = operate(operandA, operandB, operator);
-        operandB = null;
-        operator = null;
-      }
+      handleOperation();
       break;
 
     default:
