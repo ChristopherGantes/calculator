@@ -17,6 +17,7 @@ function divide(a, b) {
 let operandA;
 let operandB;
 let operator = "";
+let canClear = true;
 
 function operate(a, b, operator) {
   switch (operator) {
@@ -38,22 +39,43 @@ function operate(a, b, operator) {
 }
 
 function handleOperation() {
-  if (operator == "") {
+  if (operandA && operandB && operator != '' && canClear) {
     return;
   }
-
-  if (operandA == null && screen.textContent) {
+  if (operandA == null && screen.textContent && !canClear) {
     operandA = Math.round(parseFloat(screen.textContent) * 100) / 100;
-    console.log(operandA + operator + operandB);
-    screen.textContent = "";
-  } else if (operandB == null && screen.textContent && operator != "=") {
+    
+  } else if (operator != "" && screen.textContent) {
     operandB = Math.round(parseFloat(screen.textContent) * 100) / 100;
     operandA = operate(operandA, operandB, operator);
-    operandB = null;
-    operator = "=";
-    console.log(operandA + operator + operandB);
     screen.textContent = String(operandA);
   }
+  canClear = true;
+  console.log(operandA + operator + operandB)
+}
+
+function handleEqual() {
+  if (operandA && operandB && operator && canClear) {
+    operandA = operate(operandA, operandB, operator);
+    screen.textContent = operandA;
+    
+  }
+  else if (operandA && operator != "" && screen.textContent && !canClear) {
+    operandB = Math.round(parseFloat(screen.textContent) * 100) / 100;
+    operandA = operate(operandA, operandB, operator);
+    screen.textContent = String(operandA);
+    
+  }
+  else if (operandA){
+    operator = "";
+    
+  }
+  else if (operandA == null && screen.textContent) {
+    operandA = Math.round(parseFloat(screen.textContent) * 100) / 100;
+  }
+  canClear = true;
+  console.log(operandA + operator + operandB)
+  
 }
 const screen = document.querySelector("#screen");
 const operators = document.querySelector("#operators");
@@ -83,14 +105,13 @@ operators.addEventListener("click", (event) => {
     default:
       break;
   }
-  console.log(operandA + operator + operandB);
 });
 
 const numbers = document.querySelector("#numbers");
 numbers.addEventListener("click", (event) => {
   switch (event.target.id) {
     case "numbers":
-      return;
+      break;
 
     case "clear":
       operandA = null;
@@ -101,10 +122,14 @@ numbers.addEventListener("click", (event) => {
       break;
 
     case "equal":
-      handleOperation();
+      handleEqual();
       break;
 
     default:
+      if (canClear) {
+        screen.textContent = "";
+        canClear = false;
+      }
       screen.textContent += event.target.textContent;
       break;
   }
